@@ -38,6 +38,7 @@ class MP3Encoder:
     private:
         lame_t _lame;
         wavHeader _header;
+        std::string _filePath;
 };
 
 

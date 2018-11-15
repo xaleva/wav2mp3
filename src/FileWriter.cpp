@@ -25,5 +25,8 @@ FileWriter::~FileWriter ()
 
 void FileWriter::execute (std::shared_ptr<Packet> packet)
 {
-    fwrite (packet->outputChunk ()->data (), packet->outputChunk ()->getUsedSize (), 1, _mp3);
+    if (_mp3 != NULL)
+    {
+        fwrite (packet->outputChunk ()->data (), packet->outputChunk ()->getUsedSize (), 1, _mp3);
+    }
 }

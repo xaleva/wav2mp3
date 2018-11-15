@@ -1,1 +1,18 @@
+
+## Lame build for Windows under Linux
+cd 3rdParty
 ./configure --host=i686-w64-mingw32 --enable-static --disable-shared
+make -j4
+
+
+## Lame build for Linux
+cd 3rdParty
+./configure
+make -j4
+
+## Build project
+cd build
+cmake ../
+make -j4
+
+

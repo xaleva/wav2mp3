@@ -19,6 +19,7 @@ MP3Encoder::MP3Encoder (std::string filePath, wavHeader header)
 
     lame_init_params (_lame);
 
+    _filePath = filePath;
     setNext (std::make_shared<FileWriter> (filePath));
 }
 

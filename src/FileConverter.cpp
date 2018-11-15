@@ -10,11 +10,19 @@ FileConverter::FileConverter (std::string& filePath):
     _filePath (filePath),
     _lastPacketId (0)
 {
+    _fl = fopen (_filePath.data (), "r");
+}
+
+FileConverter::~FileConverter ()
+{
+    if (_fl != NULL)
+    {
+        fclose (_fl);
+    }
 }
 
 void FileConverter::operator() ()
 {
-    _fl = fopen (_filePath.data (), "r");
     if (_fl != NULL)
     {
         // Reading wav header information
@@ -29,7 +37,6 @@ void FileConverter::operator() ()
         if (_header.bits_per_sample == 0)
         {
             failureExit ();
-            fclose (_fl);
             _fl = NULL;
             return;
         }
@@ -61,7 +68,6 @@ void FileConverter::operator() ()
             }
             forward (packet);
         }
-        fclose (_fl);
     }
 
 }

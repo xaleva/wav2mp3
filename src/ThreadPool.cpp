@@ -1,12 +1,13 @@
 #include "../include/ThreadPool.h"
+#include "../include/SystemOutput.h"
 
-#include <algorithm>
 #include <iostream>
 
 ThreadPool* ThreadPool::_instance = nullptr;
 pthread_mutex_t ThreadPool::_mutex;
 
-#define THREAD_COUNT 10
+#define THREAD_COUNT 50
+#define THREAD_THREASHOLD 5
 
 void* processor_executor(void* args)
 {
@@ -40,13 +41,13 @@ void ThreadPool::runTask (std::shared_ptr<Task> task)
 {
     pthread_mutex_lock (&_mutex);
     _taskCount++;
-    if (_taskCount > _threadCount)
+    _taskQueue.push (task);
+    if (_taskCount > _threadCount - THREAD_THREASHOLD)
     {
+        _threadCount++;
         pthread_t id;
         int err = pthread_create (&id, NULL, processor_executor, static_cast<void*> (this));
-        _threadCount++;
     }
-    _taskQueue.push (task);
     pthread_mutex_unlock (&_mutex);
     pthread_cond_signal (&_conditionVariable);
 }

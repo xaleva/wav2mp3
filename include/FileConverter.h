@@ -12,7 +12,7 @@ class FileConverter:
 {
     public:
         FileConverter (std::string& filePath);
-        ~FileConverter () = default;
+        ~FileConverter ();
 
         virtual void operator() () override;
         virtual void execute (std::shared_ptr<Packet> packet) override {}
