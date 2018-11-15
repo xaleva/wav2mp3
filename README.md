@@ -18,6 +18,7 @@ make
 
 ## Build (For Windows)
 In order to cross compile it for Windows under the linux you will need mingw installed
+
 mkdir build
 
 cd build
