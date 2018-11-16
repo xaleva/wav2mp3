@@ -19,17 +19,26 @@ class PacketChainBase:
             ThreadPool::getInstance ().runTask (_next);
         }
 
+
         virtual void operator() () override
         {
             while (!_isFinished || !_packetQueue.empty ())
             {
+                std::shared_ptr<Packet> packet;
+
+                pthread_mutex_lock (&_mutex);
+                while (!_isFinished || _packetQueue.empty ())
+                    pthread_cond_wait (&_conditionVariable, &_mutex);
+
                 if (!_packetQueue.empty ())
                 {
-                    pthread_mutex_lock (&_mutex);
-                    auto packet = _packetQueue.front ();
+                    packet = _packetQueue.front ();
                     _packetQueue.pop ();
-                    pthread_mutex_unlock (&_mutex);
+                }
+                pthread_mutex_unlock (&_mutex);
 
+                if (packet)
+                {
                     execute (packet);
                     forward (packet);
                 }
@@ -51,6 +60,7 @@ class PacketChainBase:
             pthread_mutex_lock (&_mutex);
             _packetQueue.push (packet);
             pthread_mutex_unlock (&_mutex);
+            pthread_cond_signal (&_conditionVariable);
         }
 
         virtual ~PacketChainBase ()
@@ -63,7 +73,6 @@ class PacketChainBase:
     protected:
         std::shared_ptr<PacketChainBase> _next;
         std::queue<std::shared_ptr<Packet>> _packetQueue;
-        pthread_mutex_t _mutex;
 };
 
 

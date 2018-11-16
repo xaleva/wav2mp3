@@ -9,7 +9,8 @@ class Task
         Task ():
             _isFinished (false)
             {
-
+                pthread_mutex_init (&_mutex, NULL);
+                pthread_cond_init (&_conditionVariable, NULL);
             }
         virtual ~Task () {}
         virtual void operator() () = 0;
@@ -17,6 +18,7 @@ class Task
         void finish ()
         {
             _isFinished = true;
+            pthread_cond_signal (&_conditionVariable);
         }
 
         bool isFinished () const
@@ -25,6 +27,8 @@ class Task
         }
     protected:
         std::atomic<bool> _isFinished;
+        pthread_mutex_t _mutex;
+        pthread_cond_t _conditionVariable;
 };
 
 
